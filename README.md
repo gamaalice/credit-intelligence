@@ -22,9 +22,8 @@ The project was developed to explore solutions for credit risk analysis, data vi
 
 Screenshots coming soon.
 
-###
-
 ## Technologies
+
 ### Frontend
 
 - React
@@ -52,7 +51,29 @@ Screenshots coming soon.
 
 - Docker
 - Docker Compose
-- Automated Testing
+- Pytest
+- FastAPI TestClient
+
+## Automated Tests
+
+The project includes automated tests for dataset validation and API behavior. The test suite contains **8 tests** covering:
+
+- **Dataset schema:** verifies that the dataset uses the documented 23 predictors.
+- **Data quality profile:** checks row count, feature count, default rate, missing values, and exclusion of the identifier from model features.
+- **Invalid dataset schemas:** verifies that incomplete schemas are rejected.
+- **Target validation:** verifies that target values outside the binary classes are rejected.
+- **API summary endpoint:** checks the response when model training has not been run.
+- **Experiment endpoint:** checks that no experiments are returned when real results are not available.
+- **Prediction without a trained model:** verifies that the API returns an appropriate service-unavailable response.
+- **Prediction input validation:** checks that invalid categorical values are rejected.
+
+Run the tests from the repository root with:
+
+```bash
+uv run pytest -q
+```
+
+The suite is intended to verify core data-validation rules and API behavior. It does not, by itself, establish that the model is suitable for real-world credit decisions or that every frontend workflow has been tested.
 
 ## Context and Limitations
 

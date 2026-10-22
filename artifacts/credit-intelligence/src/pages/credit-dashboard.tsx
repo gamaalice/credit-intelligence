@@ -23,15 +23,15 @@ type FieldSpec = {
   label: string;
   min?: number;
   max?: number;
-  group?: 'history' | 'bills' | 'payments';
+  group?: 'profile' | 'history' | 'bills' | 'payments';
 };
 
 const fields: FieldSpec[] = [
-  { key: 'LIMIT_BAL', label: 'Limite de crédito (NT$)', min: 0, max: 10000000 },
-  { key: 'SEX', label: 'Código de sexo' },
-  { key: 'EDUCATION', label: 'Código de escolaridade', min: 0, max: 6 },
-  { key: 'MARRIAGE', label: 'Código de estado civil', min: 0, max: 3 },
-  { key: 'AGE', label: 'Idade', min: 18, max: 120 },
+  { key: 'LIMIT_BAL', label: 'Limite de crédito (NT$)', min: 0, max: 10000000, group: 'profile' },
+  { key: 'SEX', label: 'Sexo', group: 'profile' },
+  { key: 'EDUCATION', label: 'Escolaridade', min: 0, max: 6, group: 'profile' },
+  { key: 'MARRIAGE', label: 'Estado civil', min: 0, max: 3, group: 'profile' },
+  { key: 'AGE', label: 'Idade', min: 18, max: 120, group: 'profile' },
   { key: 'PAY_0', label: 'PAY_0 · Set', min: -2, max: 9, group: 'history' },
   { key: 'PAY_2', label: 'PAY_2 · Ago', min: -2, max: 9, group: 'history' },
   { key: 'PAY_3', label: 'PAY_3 · Jul', min: -2, max: 9, group: 'history' },
@@ -53,6 +53,7 @@ const fields: FieldSpec[] = [
 ];
 
 const groups: Record<NonNullable<FieldSpec['group']>, string> = {
+  profile: 'Perfil do titular',
   history: 'Status de pagamento · últimos 6 meses',
   bills: 'Valor da fatura · NT$',
   payments: 'Pagamentos anteriores · NT$',
@@ -262,7 +263,7 @@ export default function CreditDashboard() {
       <main className="main-area">
         <div className="topbar">
           <div className="topbar-label">UCI / inadimplência · registro de experimentos</div>
-          <div><span className="live-dot" />API conectada</div>
+          <div className={`api-status ${summaryQuery.isError || experimentQuery.isError ? 'is-error' : summaryQuery.isLoading || experimentQuery.isLoading ? 'is-loading' : 'is-ready'}`} role="status" data-testid="api-status"><span className="live-dot" />{summaryQuery.isError || experimentQuery.isError ? 'API com erro' : summaryQuery.isLoading || experimentQuery.isLoading ? 'Verificando API' : 'Dados recebidos da API'}</div>
         </div>
         <div className="page-content">
           <div className="head-row">
@@ -360,7 +361,28 @@ export default function CreditDashboard() {
                         <label htmlFor={`input-${field.key}`}>{field.label}</label>
                         {field.key === 'SEX' ? (
                           <select id={`input-${field.key}`} name={field.key} defaultValue="" required data-testid={`input-${field.key.toLowerCase()}`}>
-                            <option value="" disabled>Selecione um código</option><option value="1">1 · Masculino</option><option value="2">2 · Feminino</option>
+                            <option value="" disabled>Selecione uma opção</option>
+                            <option value="1">1 · Masculino</option>
+                            <option value="2">2 · Feminino</option>
+                          </select>
+                        ) : field.key === 'EDUCATION' ? (
+                          <select id={`input-${field.key}`} name={field.key} defaultValue="" required data-testid={`input-${field.key.toLowerCase()}`}>
+                            <option value="" disabled>Selecione uma opção</option>
+                            <option value="0">0 · Não informado</option>
+                            <option value="1">1 · Pós-graduação</option>
+                            <option value="2">2 · Universidade</option>
+                            <option value="3">3 · Ensino médio</option>
+                            <option value="4">4 · Outros</option>
+                            <option value="5">5 · Desconhecido</option>
+                            <option value="6">6 · Desconhecido</option>
+                          </select>
+                        ) : field.key === 'MARRIAGE' ? (
+                          <select id={`input-${field.key}`} name={field.key} defaultValue="" required data-testid={`input-${field.key.toLowerCase()}`}>
+                            <option value="" disabled>Selecione uma opção</option>
+                            <option value="0">0 · Não informado</option>
+                            <option value="1">1 · Casado(a)</option>
+                            <option value="2">2 · Solteiro(a)</option>
+                            <option value="3">3 · Outros</option>
                           </select>
                         ) : (
                           <input id={`input-${field.key}`} name={field.key} type="number" step="1" min={field.min} max={field.max} required placeholder="—" data-testid={`input-${field.key.toLowerCase()}`} />

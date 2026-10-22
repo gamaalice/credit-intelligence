@@ -67,14 +67,6 @@ The project includes automated tests for dataset validation and API behavior. Th
 - **Prediction without a trained model:** verifies that the API returns an appropriate service-unavailable response.
 - **Prediction input validation:** checks that invalid categorical values are rejected.
 
-Run the tests from the repository root with:
-
-```bash
-uv run pytest -q
-```
-
-The suite is intended to verify core data-validation rules and API behavior. It does not, by itself, establish that the model is suitable for real-world credit decisions or that every frontend workflow has been tested.
-
 ## Context and Limitations
 
 This project was developed for a company and made available in its MVP version as part of the solution's development and learning process.

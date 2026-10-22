@@ -1,118 +1,72 @@
 # Credit Intelligence
 
-Projeto de portfólio para demonstrar análise de dados, PySpark, SQL e Machine
-Learning com o conjunto público **Default of Credit Card Clients**, da UCI.
-O objetivo é exclusivamente educacional: nenhuma previsão pode ser usada para
-aprovar ou recusar crédito real.
+An MVP of a credit risk analysis and default prediction application, developed as part of a project for a company.
 
-## Fonte e limites dos dados
+## About the Project
 
-- Fonte oficial: [UCI Machine Learning Repository — dataset 350](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients)
-- O pipeline baixa o arquivo original da UCI quando não encontra uma cópia local.
-- A planilha oficial inclui uma linha descritiva antes do cabeçalho; a leitura
-  usa o cabeçalho observado e normaliza `default payment next month` para
-  `default.payment.next.month`, registrando esse mapeamento no perfil dos dados.
-- O alvo é `default.payment.next.month`; `ID` é usado somente para verificações
-  de qualidade e nunca entra como variável preditora.
-- A amostra representa titulares de cartão em Taiwan em 2005. Não representa
-  clientes brasileiros nem condições atuais de crédito.
-- O código valida as colunas efetivamente recebidas e falha explicitamente se
-  o arquivo não corresponder ao esquema esperado.
-- Valores faltantes são tratados dentro dos pipelines ajustados no treino.
-  Duplicatas completas são contabilizadas e mantidas; não há remoção silenciosa.
-- As probabilidades não são calibradas por pós-processamento. Brier score e
-  curva de confiabilidade são apresentados como diagnósticos.
+**Credit Intelligence** is an application designed for credit data analysis, featuring tools for visualizing key metrics, comparing Machine Learning model experiments, and simulating default predictions.
 
-## Requisitos
+The project was developed to explore solutions for credit risk analysis, data visualization, and the presentation of predictive model results.
 
-- Python 3.11
-- Java 17 (necessário para PySpark em modo local)
-- `uv` para sincronizar as dependências travadas em `uv.lock`
+> **Status: MVP (Minimum Viable Product).** This version represents an initial implementation developed during the project and made available for demonstration and portfolio purposes. It does not represent the company's final product and may not include all the features, integrations, or requirements of a production-ready solution.
 
-No Replit, o ambiente usa Python 3.11 e Java 17. Em ambiente local:
+## MVP Features
 
-```bash
-uv sync --frozen
-```
+- **Analytics Dashboard:** Visualization of key metrics and information related to credit risk.
+- **Default Prediction:** A form for simulating predictions based on an individual's credit information.
+- **Model Comparison:** Visualization of Machine Learning experiments and predictive model results.
+- **Evaluation Metrics:** Presentation of metrics used to assess model performance.
+- **Responsive Interface:** An interface designed to organize and present analytical results.
 
-## Executar o pipeline
+## Screenshots
 
-```bash
-uv run python -m credit_intelligence.training
-```
+Screenshots coming soon.
 
-O pipeline baixa o arquivo público original da UCI, valida o esquema, produz
-relatórios de qualidade, executa transformações e agregações SQL reais no
-PySpark, separa treino/validação/teste com estratificação e semente fixa,
-compara Logistic Regression, Random Forest e Gradient Boosting, registra
-parâmetros e métricas no MLflow e salva o pipeline selecionado.
+###
 
-A seleção usa o maior F1 da classe positiva na validação; empates são
-desempatados por recall e ROC-AUC de validação. O conjunto de teste reservado
-é usado apenas para a avaliação final e não para escolher o modelo.
+## Technologies
 
-Arquivos gerados em `data/` (ignorados pelo Git):
+### Frontend
 
-- `raw/`: cópia local do arquivo UCI baixado
-- `eda/`: perfil do dataset e agregações produzidas pelo PySpark/SQL
-- `model_artifacts/results.json`: métricas reais e metadados dos experimentos
-- `model_artifacts/selected_model.joblib`: pipeline completo para inferência
-- `mlruns/`: experimentos locais do MLflow
+- React
+- TypeScript
+- Tailwind CSS
+- Lucide React
+- Vite
 
-## API FastAPI
+### Backend and API
 
-Depois do treinamento:
+- Python
+- FastAPI
+- Uvicorn
 
-```bash
-uv run uvicorn credit_intelligence.api:app --host 0.0.0.0 --port 8000
-```
+### Data Science and Machine Learning
 
-Documentação interativa: `http://localhost:8000/docs`.
+- PySpark
+- Pandas
+- NumPy
+- Scikit-learn
+- MLflow
+- Matplotlib
 
-- `GET /credit/summary` — resumo do dataset e dos resultados mais recentes
-- `GET /credit/experiments` — métricas comparativas
-- `POST /credit/predict` — valida as 23 variáveis e retorna uma probabilidade
+### Infrastructure and Testing
 
-Sem modelo treinado, a API responde com um estado explícito `not_trained` ou
-HTTP 503; ela não cria previsões de exemplo.
+- Docker
+- Docker Compose
+- Automated Testing
 
-## Dashboard Streamlit
+## Context and Limitations
 
-```bash
-uv run streamlit run credit_intelligence/dashboard.py --server.port 8501
-```
+This project was developed for a company and made available in its MVP version as part of the solution's development and learning process.
 
-O dashboard lê os resultados e relatórios gerados pelo pipeline: comparação
-de métricas no teste, matriz de confusão, calibração, importância por
-permutação e agregações SQL do PySpark.
+As an initial version, the application should not be considered the company's final product or a system validated for use in real-world credit approval decisions.
 
-## Aplicação Replit
+The predictions and metrics displayed depend on the data, models, and integrations available in this version. Results presented in a demonstration interface do not guarantee performance in real-world scenarios.
 
-O projeto também inclui uma interface web em português que consulta os
-endpoints `/api/credit/*`. O servidor Express existente encaminha essas
-requisições para a API FastAPI local, sem duplicar a lógica de inferência.
-Execute o pipeline antes de usar a previsão interativa.
+## Project Objective
 
-## Docker
+To explore the development of a credit risk analysis application that integrates data visualization, metric reporting, and prediction simulations into a single interface.
 
-```bash
-docker compose build
-docker compose run --rm api uv run python -m credit_intelligence.training
-docker compose up api dashboard
-```
+---
 
-- API: `http://localhost:8000/docs`
-- Streamlit: `http://localhost:8501`
-
-O volume `credit-data` mantém dados e artefatos locais entre execuções. Não são
-necessárias credenciais, serviços pagos ou integrações comerciais.
-
-## Testes
-
-```bash
-uv run pytest -q
-```
-
-Os testes cobrem o contrato dos dados, validações da API, o estado sem modelo
-treinado e as respostas de erro. O treinamento completo pode ser repetido com
-o mesmo comando e semente.
+**Note:** This repository showcases an MVP version of the project and may not reflect the final implementation delivered to or used by the company.

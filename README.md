@@ -25,7 +25,6 @@ Screenshots coming soon.
 ###
 
 ## Technologies
-
 ### Frontend
 
 - React

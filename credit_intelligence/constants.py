@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import os
@@ -8,7 +9,9 @@ DATA_DIR = Path(os.getenv("CREDIT_DATA_DIR", PROJECT_ROOT / "data")).resolve()
 RAW_DATA_DIR = DATA_DIR / "raw"
 OUTPUT_DIR = DATA_DIR / "model_artifacts"
 EDA_DIR = DATA_DIR / "eda"
-MLRUNS_DIR = DATA_DIR / "mlruns"
+
+MLFLOW_DB_PATH = DATA_DIR / "mlflow.db"
+MLFLOW_ARTIFACTS_DIR = DATA_DIR / "mlflow_artifacts"
 
 UCI_DATASET_URL = (
     "https://archive.ics.uci.edu/static/public/350/"
@@ -29,6 +32,7 @@ CATEGORICAL_FEATURES = [
     "PAY_5",
     "PAY_6",
 ]
+
 NUMERIC_FEATURES = [
     "LIMIT_BAL",
     "AGE",
@@ -45,10 +49,12 @@ NUMERIC_FEATURES = [
     "PAY_AMT5",
     "PAY_AMT6",
 ]
+
 FEATURE_COLUMNS = CATEGORICAL_FEATURES + NUMERIC_FEATURES
 REQUIRED_COLUMNS = [IDENTIFIER_COLUMN, *FEATURE_COLUMNS, TARGET_COLUMN]
 
 RANDOM_STATE = 42
+
 MODEL_PATH = OUTPUT_DIR / "selected_model.joblib"
 RESULTS_PATH = OUTPUT_DIR / "results.json"
 EXPERIMENTS_PATH = OUTPUT_DIR / "experiments.json"

@@ -10,7 +10,7 @@ The project was developed to explore solutions for credit risk analysis, data vi
 
 > **Status: MVP (Minimum Viable Product).** This version represents an initial implementation developed during the project and made available for demonstration and portfolio purposes. It does not represent the company's final product and may not include all the features, integrations, or requirements of a production-ready solution.
 
-## MVP Features
+## Features
 
 - **Analytics Dashboard:** Visualization of key metrics and information related to credit risk.
 - **Default Prediction:** A form for simulating predictions based on an individual's credit information.

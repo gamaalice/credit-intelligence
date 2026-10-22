@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: credit-intelligence
+    description: Educational credit-default model analysis and inference
 paths:
   /healthz:
     get:
@@ -24,6 +26,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /credit/summary:
+    get:
+      operationId: getCreditSummary
+      tags: [credit-intelligence]
+      summary: Get the latest reproducible dataset and model summary
+      responses:
+        "200":
+          description: Current training summary, or an explicit not-trained state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditSummary"
+  /credit/experiments:
+    get:
+      operationId: getCreditExperiments
+      tags: [credit-intelligence]
+      summary: Compare evaluated model experiments
+      responses:
+        "200":
+          description: Model metrics produced by the latest training run
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ModelExperiment"
+  /credit/predict:
+    post:
+      operationId: predictCreditDefault
+      tags: [credit-intelligence]
+      summary: Estimate default probability for an educational example
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreditPredictionInput"
+      responses:
+        "200":
+          description: Estimated probability and model metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditPrediction"
+        "400":
+          description: Invalid feature values or missing trained model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "422":
+          description: Request body failed input validation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: No validated model is available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +97,102 @@ components:
           type: string
       required:
         - status
+    ModelExperiment:
+      type: object
+      properties:
+        model:
+          type: string
+        precision:
+          type: number
+        recall:
+          type: number
+        f1:
+          type: number
+        roc_auc:
+          type: number
+        accuracy:
+          type: number
+        brier_score:
+          type: number
+        confusion_matrix:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+        selected:
+          type: boolean
+      required: [model, precision, recall, f1, roc_auc, accuracy, brier_score, confusion_matrix, selected]
+    CreditSummary:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ready, not_trained]
+        dataset:
+          type: ["object", "null"]
+          properties:
+            name: { type: string }
+            source: { type: string }
+            rows: { type: integer }
+            features: { type: integer }
+            default_rate: { type: number }
+            missing_values: { type: integer }
+            duplicate_rows: { type: integer }
+        selected_model:
+          type: ["string", "null"]
+        trained_at:
+          type: ["string", "null"]
+        experiments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModelExperiment"
+        message:
+          type: ["string", "null"]
+      required: [status, dataset, selected_model, trained_at, experiments, message]
+    CreditPredictionInput:
+      type: object
+      properties:
+        LIMIT_BAL: { type: number, minimum: 0, maximum: 10000000 }
+        SEX: { type: integer, enum: [1, 2] }
+        EDUCATION: { type: integer, minimum: 0, maximum: 6 }
+        MARRIAGE: { type: integer, minimum: 0, maximum: 3 }
+        AGE: { type: integer, minimum: 18, maximum: 120 }
+        PAY_0: { type: integer, minimum: -2, maximum: 9 }
+        PAY_2: { type: integer, minimum: -2, maximum: 9 }
+        PAY_3: { type: integer, minimum: -2, maximum: 9 }
+        PAY_4: { type: integer, minimum: -2, maximum: 9 }
+        PAY_5: { type: integer, minimum: -2, maximum: 9 }
+        PAY_6: { type: integer, minimum: -2, maximum: 9 }
+        BILL_AMT1: { type: number }
+        BILL_AMT2: { type: number }
+        BILL_AMT3: { type: number }
+        BILL_AMT4: { type: number }
+        BILL_AMT5: { type: number }
+        BILL_AMT6: { type: number }
+        PAY_AMT1: { type: number, minimum: 0 }
+        PAY_AMT2: { type: number, minimum: 0 }
+        PAY_AMT3: { type: number, minimum: 0 }
+        PAY_AMT4: { type: number, minimum: 0 }
+        PAY_AMT5: { type: number, minimum: 0 }
+        PAY_AMT6: { type: number, minimum: 0 }
+      required: [LIMIT_BAL, SEX, EDUCATION, MARRIAGE, AGE, PAY_0, PAY_2, PAY_3, PAY_4, PAY_5, PAY_6, BILL_AMT1, BILL_AMT2, BILL_AMT3, BILL_AMT4, BILL_AMT5, BILL_AMT6, PAY_AMT1, PAY_AMT2, PAY_AMT3, PAY_AMT4, PAY_AMT5, PAY_AMT6]
+    CreditPrediction:
+      type: object
+      properties:
+        default_probability:
+          type: number
+          minimum: 0
+          maximum: 1
+        model:
+          type: string
+        educational_notice:
+          type: string
+      required: [default_probability, model, educational_notice]
+    ApiError:
+      type: object
+      properties:
+        detail:
+          type: string
+      required: [detail]
 

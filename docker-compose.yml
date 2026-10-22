@@ -1,0 +1,40 @@
+services:
+  api:
+    build: .
+    command:
+      - uv
+      - run
+      - python
+      - -m
+      - uvicorn
+      - credit_intelligence.api:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - credit-data:/app/data
+
+  dashboard:
+    build: .
+    command:
+      - uv
+      - run
+      - streamlit
+      - run
+      - credit_intelligence/dashboard.py
+      - --server.address
+      - 0.0.0.0
+      - --server.port
+      - "8501"
+    ports:
+      - "8501:8501"
+    volumes:
+      - credit-data:/app/data
+    depends_on:
+      - api
+
+volumes:
+  credit-data:

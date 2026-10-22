@@ -16,6 +16,16 @@ out-tsc
 
 # dependencies
 node_modules
+/.pythonlibs/
+/.venv/
+
+# Python and generated model/data artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+/data/
+/mlruns/
+/main.py
 
 # IDEs and editors
 /.idea

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Credit Intelligence"
+description = "A portfolio project for exploring the UCI credit-card default dataset, comparing reproducible machine-learning experiments, and reviewing educational risk estimates."
+version = "1.0.0"
+id = "artifacts/credit-intelligence"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25639
+
+[services.development]
+run = "pnpm --filter @workspace/credit-intelligence run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/credit-intelligence", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/credit-intelligence/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25639"
+BASE_PATH = "/"

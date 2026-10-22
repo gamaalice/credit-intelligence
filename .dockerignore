@@ -1,0 +1,12 @@
+.git
+.gitignore
+.replit
+.replitignore
+.local
+.pythonlibs
+.venv
+node_modules
+data
+mlruns
+__pycache__
+.pytest_cache
